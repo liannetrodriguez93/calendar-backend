@@ -3,15 +3,27 @@ const { validationResult } = require("express-validator");
 const UserModel = require("../models/UserModel");
 
 const createUser = async (req, res = response) => {
-  console.log('req', req);
+  const { email, password } = req.body;
 
   try {
-    const user = new UserModel(req.body);
+    let user = await  UserModel.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({
+        ok: false,
+        msg: "There is already a user with that mail",
+      });
+    }
+    
+    user = new UserModel(req.body);
     await user.save();
-  
+
     res.status(201).json({
       ok: true,
-      msg: "register",
+      data: {
+        uid: user.id,
+        name: user.name
+      },
     });
   } catch (error) {
     res.status(500).json({
