@@ -1,6 +1,8 @@
 const { response } = require("express");
 const bcrypt = require("bcryptjs");
+
 const UserModel = require("../models/UserModel");
+const { generateJWT } = require("../helpers/jwt");
 
 const createUser = async (req, res = response) => {
   const { email, password } = req.body;
@@ -23,11 +25,15 @@ const createUser = async (req, res = response) => {
 
     await user.save();
 
+    //Generate JWT
+    const validPassword = bcrypt.compareSync(password, user.password);
+
     res.status(201).json({
       ok: true,
-      data: {
+      msg: {
         uid: user.id,
         name: user.name,
+        token,
       },
     });
   } catch (error) {
@@ -38,22 +44,56 @@ const createUser = async (req, res = response) => {
   }
 };
 
-const login = (req, res = response) => {
+const login = async (req, res = response) => {
   const { email, password } = req.body;
 
-  res.json({
-    ok: true,
-    msg: "login",
-    email,
-    password,
-  });
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({
+        ok: false,
+        msg: "User or password are wrong",
+      });
+    }
+
+    const validPassword = bcrypt.compareSync(password, user.password);
+
+    if (!validPassword) {
+      return res.status(400).json({
+        ok: false,
+        msg: "User or password are wrong",
+      });
+    }
+
+    //Generate JWT
+    const token = await generateJWT(user.id, user.name);
+
+    res.json({
+      ok: true,
+      msg: {
+        uid: user.id,
+        name: user.name,
+        token,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "Server error",
+    });
+  }
 };
 
 const refreshToken = (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: "refresh",
-  });
+  try {
+    res.json({
+      ok: true,
+      msg: "refresh",
+    });
+  } catch (error) {
+    
+  }
 };
 
 module.exports = {
