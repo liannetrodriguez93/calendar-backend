@@ -1,12 +1,12 @@
 const { response } = require("express");
-const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 const UserModel = require("../models/UserModel");
 
 const createUser = async (req, res = response) => {
   const { email, password } = req.body;
 
   try {
-    let user = await  UserModel.findOne({ email });
+    let user = await UserModel.findOne({ email });
 
     if (user) {
       return res.status(400).json({
@@ -14,15 +14,20 @@ const createUser = async (req, res = response) => {
         msg: "There is already a user with that mail",
       });
     }
-    
+
     user = new UserModel(req.body);
+
+    //Password encription
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(password, salt);
+
     await user.save();
 
     res.status(201).json({
       ok: true,
       data: {
         uid: user.id,
-        name: user.name
+        name: user.name,
       },
     });
   } catch (error) {
