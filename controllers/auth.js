@@ -26,7 +26,7 @@ const createUser = async (req, res = response) => {
     await user.save();
 
     //Generate JWT
-    const validPassword = bcrypt.compareSync(password, user.password);
+    const token = await generateJWT(user.id, user.name);
 
     res.status(201).json({
       ok: true,
@@ -85,15 +85,20 @@ const login = async (req, res = response) => {
   }
 };
 
-const refreshToken = (req, res = response) => {
+const refreshToken = async (req, res = response) => {
+  const {uid, name} = req;
+
+  //Generate JWT
+  const token = await generateJWT(uid, name);
+
   try {
     res.json({
       ok: true,
-      msg: "refresh",
+      msg: {
+        token
+      },
     });
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 };
 
 module.exports = {

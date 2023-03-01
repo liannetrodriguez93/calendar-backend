@@ -10,6 +10,7 @@ const { fieldValidator } = require("../middlewares/field-validator");
 const router = Router();
 
 const { createUser, login, refreshToken } = require("../controllers/auth");
+const { validateJWT } = require("../middlewares/validate-jwt");
 
 //Auth rute
 router.post(
@@ -39,6 +40,6 @@ router.post(
   login
 );
 
-router.get("/refresh", refreshToken);
+router.get("/refresh", validateJWT, refreshToken);
 
 module.exports = router;
