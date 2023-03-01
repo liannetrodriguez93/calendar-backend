@@ -1,16 +1,24 @@
 const { response } = require("express");
 const { validationResult } = require("express-validator");
+const UserModel = require("../models/UserModel");
 
-const createUser = (req, res = response) => {
-  const { name, email, password } = req.body;
+const createUser = async (req, res = response) => {
+  console.log('req', req);
 
-  res.status(201).json({
-    ok: true,
-    msg: "register",
-    name,
-    email,
-    password,
-  });
+  try {
+    const user = new UserModel(req.body);
+    await user.save();
+  
+    res.status(201).json({
+      ok: true,
+      msg: "register",
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "Server error",
+    });
+  }
 };
 
 const login = (req, res = response) => {
