@@ -50,7 +50,7 @@ const login = async (req, res = response) => {
   try {
     const user = await UserModel.findOne({ email });
 
-    if (user) {
+    if (!user) {
       return res.status(400).json({
         ok: false,
         msg: "User or password are wrong",
