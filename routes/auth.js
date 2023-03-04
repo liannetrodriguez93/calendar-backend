@@ -28,7 +28,7 @@ router.post(
 );
 
 router.post(
-  "/",
+  "/login",
   [
     check("email", "Email is required").isEmail(),
     check(
