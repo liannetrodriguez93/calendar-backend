@@ -7,21 +7,21 @@ const getEvents = async (req, res = response) => {
   });
 };
 
-const createEvents = async (req, res = response) => {
+const createEvent = async (req, res = response) => {
   res.json({
     ok: true,
     msg: "createEvents",
   });
 };
 
-const updateEvents = async (req, res = response) => {
+const updateEvent = async (req, res = response) => {
   res.json({
     ok: true,
     msg: "updateEvents",
   });
 };
 
-const deleteEvents = async (req, res = response) => {
+const deleteEvent = async (req, res = response) => {
   res.json({
     ok: true,
     msg: "deleteEvents",
@@ -30,7 +30,7 @@ const deleteEvents = async (req, res = response) => {
 
 module.exports = {
   getEvents,
-  createEvents,
-  updateEvents,
-  deleteEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
 };
