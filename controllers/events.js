@@ -6,7 +6,9 @@ const getEvents = async (req, res = response) => {
 
   res.json({
     ok: true,
-    msg: events,
+    msg: {
+      events: events,
+    },
   });
 };
 
@@ -18,7 +20,9 @@ const createEvent = async (req, res = response) => {
     const savedEvent = await event.save();
     res.json({
       ok: true,
-      msg: savedEvent,
+      msg: {
+        event: savedEvent,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -39,7 +43,7 @@ const updateEvent = async (req, res = response) => {
     if (!event) {
       res.status(404).json({
         ok: false,
-        msg: "An event with tath id doesn't exist",
+        msg: "An event with that id doesn't exist",
       });
     }
 
@@ -61,7 +65,9 @@ const updateEvent = async (req, res = response) => {
 
     res.json({
       ok: true,
-      msg: updatedEvent,
+      msg: {
+        events: updatedEvent,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -73,10 +79,46 @@ const updateEvent = async (req, res = response) => {
 };
 
 const deleteEvent = async (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: "deleteEvents",
-  });
+  const eventId = req.params.id;
+  const uid = req.uid;
+
+  try {
+    const event = await EventModel.findById(eventId);
+
+    if (!event) {
+      res.status(404).json({
+        ok: false,
+        msg: "An event with that id doesn't exist",
+      });
+    }
+
+    if (event.user.toString() !== uid) {
+      res.status(401).json({
+        ok: false,
+        msg: "You cannot delete this event",
+      });
+    }
+
+    const newEvent = {
+      ...req.body,
+      user: uid,
+    };
+
+    await EventModel.findByIdAndRemove(eventId);
+
+    res.json({
+      ok: true,
+      msg: {
+        event: event,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      of: false,
+      msg: "Something happend",
+    });
+  }
 };
 
 module.exports = {
