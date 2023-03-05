@@ -10,9 +10,12 @@ const {
 
 const router = Router();
 
-router.get("/", validateJWT, getEvents);
-router.post("/", validateJWT, createEvent);
-router.put("/:id", validateJWT, updateEvent);
-router.delete("/:id", validateJWT, deleteEvent);
+//Validate Toke for all routes
+router.use(validateJWT);
+
+router.get("/", getEvents);
+router.post("/", createEvent);
+router.put("/:id", updateEvent);
+router.delete("/:id", deleteEvent);
 
 module.exports = router;
