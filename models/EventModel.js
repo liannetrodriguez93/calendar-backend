@@ -7,7 +7,6 @@ const EventSchema = Schema({
   },
   notes: {
     type: String,
-    require: true,
   },
   start: {
     type: Date,
@@ -19,7 +18,8 @@ const EventSchema = Schema({
   },
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    require: true,
   }
 });
 
