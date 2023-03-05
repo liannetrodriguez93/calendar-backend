@@ -1,3 +1,8 @@
+/*
+  Events Routes
+  host + /api/events
+*/
+
 const { Router } = require("express");
 const { check } = require("express-validator");
 
