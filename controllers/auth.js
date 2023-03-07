@@ -86,7 +86,7 @@ const login = async (req, res = response) => {
 };
 
 const refreshToken = async (req, res = response) => {
-  const {uid, name} = req;
+  const { uid, name } = req;
 
   //Generate JWT
   const token = await generateJWT(uid, name);
@@ -95,7 +95,9 @@ const refreshToken = async (req, res = response) => {
     res.json({
       ok: true,
       msg: {
-        token
+        uid,
+        name,
+        token,
       },
     });
   } catch (error) {}
